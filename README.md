@@ -35,16 +35,19 @@ endorsed by PIMA Electronic Systems.
   you intend to use.
 - Home Assistant 2026.8.0 or newer.
 
-Version 1.20.0 was physically validated with Force JSON Interface 2.3, Home
+Version 1.21.0 was physically validated with Force JSON Interface 2.3, Home
 Assistant Core 2026.8.3, one partition and 24 zones. Testing covered discovery,
 zone state, Home 1-4, Away, Shabbat, Disarm, alarm trigger/restore, sirens,
 temporary bypass, permanently-disabled-zone rejection, user attribution,
-reconnect and active-fault recovery.
+reconnect and active-fault recovery. It also confirmed that ordinary zone
+changes and four-minute keepalives no longer republish an unchanged alarm
+entity, while genuine arm/disarm transitions still propagate.
 
 Automated tests cover fragmented and combined JSON frames, heartbeat,
 ACK/NAK, timeouts, counter rollover, duplicate events, fault pagination,
-controlled-output decoding and multiple partitions. Physical testing of
-configured controlled outputs and multiple partitions remains outstanding.
+controlled-output decoding, multiple partitions and the 12-minute traffic
+watchdog. Physical testing of configured controlled outputs, multiple
+partitions and a silent-but-open TCP timeout remains outstanding.
 
 The current release supports one panel per Home Assistant installation.
 
@@ -73,6 +76,12 @@ must match the destination port configured in the panel's MOKED settings. The
 panel initiates the connection; Home Assistant does not connect outward to the
 panel. A delay before the first connection can therefore be caused by the
 panel's own reconnect interval.
+
+The panel normally sends traffic at least once every four minutes. If an active
+TCP session receives no JSON frame for 12 minutes, the integration marks it
+disconnected and closes the stale session so the panel can reconnect. Last Seen
+and Last Heartbeat remain dedicated diagnostic sensors; timestamp-only updates
+do not republish an unchanged alarm-control-panel entity.
 
 Legacy YAML is imported automatically:
 

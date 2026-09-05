@@ -82,6 +82,9 @@ async def _async_setup(hass, async_add_entities, server, entry):
             async_add_entities([panel])
         else:
             panel = entities[partition]
+        previous_alarm_state = panel._attr_alarm_state
+        previous_available = panel._attr_available
+        previous_changed_by = getattr(panel, "_attr_changed_by", None)
         panel._attr_alarm_state = STATE_MAP.get(event.data.get("state"), AlarmControlPanelState.DISARMED)
         previous = dict(panel.extra_state_attributes or {})
         panel._attr_extra_state_attributes = {
@@ -95,8 +98,7 @@ async def _async_setup(hass, async_add_entities, server, entry):
             if key in event.data
         }
         for key in (
-            "last_seen", "last_heartbeat", "user", "user_name",
-            "last_triggered_zone",
+            "user", "user_name", "last_triggered_zone",
             "last_triggered_partition", "last_triggered_user",
             "last_triggered_user_name", "last_triggered_at",
         ):
@@ -107,20 +109,16 @@ async def _async_setup(hass, async_add_entities, server, entry):
         if "user" in event.data:
             panel._attr_changed_by = event.data.get("user_name") or str(event.data["user"])
         panel._attr_available = True
-        if panel.hass is not None:
+        changed = (
+            panel._attr_alarm_state != previous_alarm_state
+            or panel._attr_available != previous_available
+            or panel._attr_changed_by != previous_changed_by
+            or panel._attr_extra_state_attributes != previous
+        )
+        if changed and panel.hass is not None:
             panel.async_write_ha_state()
 
     listen("pima_state", handle_state)
-
-    async def handle_connected(event):
-        # Remain unavailable until authoritative partition state (2310) arrives.
-        for panel in entities.values():
-            panel._attr_extra_state_attributes = dict(panel.extra_state_attributes or {})
-            panel._attr_extra_state_attributes["last_seen"] = event.data.get("last_seen")
-            if panel.hass is not None:
-                panel.async_write_ha_state()
-
-    listen("pima_connected", handle_connected)
 
     async def handle_disconnected(event):
         for panel in entities.values():
@@ -129,15 +127,6 @@ async def _async_setup(hass, async_add_entities, server, entry):
                 panel.async_write_ha_state()
 
     listen("pima_disconnected", handle_disconnected)
-
-    async def handle_last_seen(event):
-        for panel in entities.values():
-            panel._attr_extra_state_attributes = dict(panel.extra_state_attributes or {})
-            panel._attr_extra_state_attributes.update(event.data)
-            if panel.hass is not None:
-                panel.async_write_ha_state()
-
-    listen("pima_last_seen", handle_last_seen)
 
 
 class PimaAlarmControlPanel(AlarmControlPanelEntity):

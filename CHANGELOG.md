@@ -3,6 +3,22 @@
 All notable changes to the PIMA Force Home Assistant integration will be
 documented in this file. Versions follow semantic versioning.
 
+## 1.21.0 - Quiet alarm state and stale-connection detection
+
+- Stop copying `last_seen` and `last_heartbeat` onto alarm-control-panel
+  entities. Dedicated diagnostic sensors continue to expose both timestamps.
+- Prevent panel keepalives accompanying zone activity from republishing an
+  unchanged alarm state to Home Assistant subscribers.
+- Suppress a second identical alarm state produced when the authoritative
+  partition refresh confirms an arm/disarm event already received from PIMA.
+- Add a 12-minute all-traffic watchdog. A connected panel that sends no JSON
+  frame during that period is marked disconnected and its stale TCP session is
+  closed so it can reconnect.
+- Preserve immediate zone updates, real alarm/partition transitions, connection
+  transitions, timestamp sensors and stable entity IDs.
+- Add regression coverage for alarm metadata, watchdog timeout, single
+  disconnect emission and watchdog reset by ordinary panel traffic.
+
 ## 1.20.0 - Community release
 
 - Prepared the authorized `amithalp/pima-force-ha-integration` community

@@ -15,6 +15,7 @@ FAULT_INIT_RETRIES = 3
 MIN_REQUEST_GAP = 0.03
 CONFIG_REFRESH_DELAY = 5
 ACTIVE_FAULT_RECHECK_INTERVAL = 60
+PANEL_TRAFFIC_TIMEOUT = 12 * 60
 FAULT_EVENT_TYPES = {
     137, 143, 144, 145, 301, 302, 305, 312, 321, 322,
     338, 342, 344, 350, 351, 381, 384,
@@ -130,9 +131,11 @@ class PimaServer:
         self._fault_refresh_task = None
         self._fault_init_retry_task = None
         self._configuration_refresh_task = None
+        self._connection_watchdog_task = None
         self._write_lock = asyncio.Lock()
         self._last_request_sent = 0.0
         self._last_fault_request = 0.0
+        self._last_traffic_received = 0.0
 
     async def start(self):
         self.server = await asyncio.start_server(
@@ -148,6 +151,9 @@ class PimaServer:
             self._fault_init_retry_task.cancel()
         if self._configuration_refresh_task and not self._configuration_refresh_task.done():
             self._configuration_refresh_task.cancel()
+        if self._connection_watchdog_task and not self._connection_watchdog_task.done():
+            self._connection_watchdog_task.cancel()
+        self._connection_watchdog_task = None
         self._fail_pending_commands("Integration unloaded")
         if self.writer is not None:
             self.writer.close()
@@ -169,8 +175,16 @@ class PimaServer:
         if previous_writer is not None and previous_writer is not writer:
             _LOGGER.warning("Replacing an existing PIMA client connection")
             previous_writer.close()
+        previous_watchdog = self._connection_watchdog_task
+        if previous_watchdog and not previous_watchdog.done():
+            previous_watchdog.cancel()
         self.connected = True
         self.last_seen = datetime.now(UTC)
+        self._last_traffic_received = asyncio.get_running_loop().time()
+        connection_watchdog = asyncio.create_task(
+            self._watch_connection(writer), name="pima_connection_watchdog"
+        )
+        self._connection_watchdog_task = connection_watchdog
         self._last_panel_counter = None
         self._init_done = False  # DATA-REQs sent only after first null handshake
         self.faults_initialized = False
@@ -193,6 +207,7 @@ class PimaServer:
                     break
 
                 self.last_seen = datetime.now(UTC)
+                self._last_traffic_received = asyncio.get_running_loop().time()
                 # Decode as latin-1 (1:1 byte mapping, never fails).
                 # Hebrew names from PIMA are Windows-1255; latin-1 preserves
                 # the raw bytes through JSON parsing so we can re-decode them
@@ -211,12 +226,44 @@ class PimaServer:
             _LOGGER.info("PIMA client disconnected")
             writer.close()
             if self.writer is writer:
-                self.connected = False
-                self.writer = None
-                self._fail_pending_commands("Panel disconnected")
-                self.hass.bus.async_fire("pima_disconnected", {})
+                self._mark_disconnected(writer, "Panel disconnected")
             else:
-                _LOGGER.debug("Replaced PIMA connection closed; active client retained")
+                _LOGGER.debug("Inactive PIMA connection closed")
+            if not connection_watchdog.done():
+                connection_watchdog.cancel()
+            if self._connection_watchdog_task is connection_watchdog:
+                self._connection_watchdog_task = None
+
+    async def _watch_connection(self, writer):
+        """Close an active connection after prolonged complete panel silence."""
+        loop = asyncio.get_running_loop()
+        try:
+            while self.writer is writer and self.connected:
+                remaining = PANEL_TRAFFIC_TIMEOUT - (
+                    loop.time() - self._last_traffic_received
+                )
+                if remaining > 0:
+                    await asyncio.sleep(remaining)
+                    continue
+                _LOGGER.warning(
+                    "PIMA panel sent no traffic for %s minutes; closing stale connection",
+                    PANEL_TRAFFIC_TIMEOUT // 60,
+                )
+                self._mark_disconnected(writer, "Panel traffic timed out")
+                return
+        except asyncio.CancelledError:
+            return
+
+    def _mark_disconnected(self, writer, reason):
+        """Mark the active writer disconnected exactly once."""
+        if self.writer is not writer:
+            return False
+        self.connected = False
+        self.writer = None
+        self._fail_pending_commands(reason)
+        self.hass.bus.async_fire("pima_disconnected", {})
+        writer.close()
+        return True
 
     async def handle_message(self, msg, writer=None):
         frame_type = str(msg.get("frame_type", "")).upper()

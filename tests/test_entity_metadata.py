@@ -23,8 +23,17 @@ def _module(name, **attributes):
 
 
 class _Entity:
+    hass = None
+
     async def async_added_to_hass(self):
         pass
+
+    @property
+    def extra_state_attributes(self):
+        return self._attr_extra_state_attributes
+
+    def async_write_ha_state(self):
+        self.state_write_count = getattr(self, "state_write_count", 0) + 1
 
 
 class _AlarmFeatures(IntFlag):
@@ -262,6 +271,52 @@ class EntityMetadataTests(unittest.TestCase):
                 if name
             ),
         )
+
+    def test_alarm_panel_does_not_subscribe_to_timestamp_updates(self):
+        source = (PIMA_PATH / "alarm_control_panel.py").read_text(encoding="utf-8")
+        self.assertNotIn('listen("pima_last_seen"', source)
+        alarm = alarm_module.PimaAlarmControlPanel(self.server, 1)
+        self.assertNotIn("last_seen", alarm._attr_extra_state_attributes)
+        self.assertNotIn("last_heartbeat", alarm._attr_extra_state_attributes)
+
+    def test_identical_partition_confirmation_is_not_republished(self):
+        class Bus:
+            def __init__(self):
+                self.listeners = {}
+
+            def async_listen(self, event_type, handler):
+                self.listeners[event_type] = handler
+                return lambda: None
+
+        async def exercise():
+            hass = SimpleNamespace(bus=Bus())
+            entities = []
+
+            def add_entities(new_entities):
+                for entity in new_entities:
+                    entity.hass = hass
+                    entities.append(entity)
+
+            await alarm_module._async_setup(hass, add_entities, self.server, None)
+            panel = entities[0]
+            event_handler = hass.bus.listeners["pima_state"]
+            await event_handler(
+                SimpleNamespace(
+                    data={
+                        "state": "armed_home_1",
+                        "partition": 1,
+                        "user": 9,
+                        "user_name": "Smart Home",
+                    }
+                )
+            )
+            self.assertEqual(panel.state_write_count, 1)
+            await event_handler(
+                SimpleNamespace(data={"state": "armed_home_1", "partition": 1})
+            )
+            self.assertEqual(panel.state_write_count, 1)
+
+        asyncio.run(exercise())
 
     def test_home_assistant_controls_call_standard_server_commands(self):
         calls = []

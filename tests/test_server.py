@@ -440,6 +440,62 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.server.connected)
         self.assertIsNone(self.server.writer)
 
+    async def test_traffic_watchdog_disconnects_stale_client_once(self):
+        reader, writer = FakeReader(), FakeWriter()
+        original_timeout = pima_server.PANEL_TRAFFIC_TIMEOUT
+        pima_server.PANEL_TRAFFIC_TIMEOUT = 0.02
+        try:
+            task = asyncio.create_task(self.server.handle_client(reader, writer))
+            await asyncio.sleep(0.04)
+            self.assertTrue(writer.closed)
+            self.assertFalse(self.server.connected)
+            self.assertIsNone(self.server.writer)
+            disconnected = [
+                data
+                for name, data in self.hass.bus.events
+                if name == "pima_disconnected"
+            ]
+            self.assertEqual(disconnected, [{}])
+
+            reader.close()
+            await task
+            disconnected = [
+                data
+                for name, data in self.hass.bus.events
+                if name == "pima_disconnected"
+            ]
+            self.assertEqual(disconnected, [{}])
+        finally:
+            pima_server.PANEL_TRAFFIC_TIMEOUT = original_timeout
+
+    async def test_any_panel_traffic_resets_watchdog(self):
+        reader, writer = FakeReader(), FakeWriter()
+        original_timeout = pima_server.PANEL_TRAFFIC_TIMEOUT
+        pima_server.PANEL_TRAFFIC_TIMEOUT = 0.08
+        try:
+            task = asyncio.create_task(self.server.handle_client(reader, writer))
+            await asyncio.sleep(0.04)
+            reader.feed(
+                json.dumps(
+                    {
+                        "frame_type": "event",
+                        "counter": 7,
+                        "type": 760,
+                        "qualifier": 1,
+                        "zone": 1,
+                        "partition": 1,
+                    }
+                ).encode()
+            )
+            await asyncio.sleep(0.05)
+            self.assertTrue(self.server.connected)
+            self.assertIs(self.server.writer, writer)
+
+            reader.close()
+            await task
+        finally:
+            pima_server.PANEL_TRAFFIC_TIMEOUT = original_timeout
+
     def test_zone_discovery_names_status_and_partition(self):
         frames = load_fixture("sanitized_panel_capture.jsonl")
         for frame in frames[1:5]:

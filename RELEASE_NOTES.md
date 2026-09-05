@@ -1,46 +1,29 @@
-# PIMA Force 1.20.0
+# PIMA Force 1.21.0
 
-This is the first community release maintained at
-`amithalp/pima-force-ha-integration`. It expands the original proof of concept
-into a config-entry-based Home Assistant integration while preserving existing
-entity unique IDs.
+This focused reliability release reduces unnecessary Home Assistant state
+traffic and detects a connected panel that has silently stopped communicating.
 
-## Highlights
+## Changes
 
-- Reliable streaming JSON framing, serialized requests, unique counters,
-  duplicate-event suppression, ACK/NAK correlation and command timeouts.
-- Alarm trigger/restore, multiple partitions, Away, Home 1-4, Shabbat and
-  Disarm.
-- Zone discovery, panel-provided names, rich status attributes and native Home
-  Assistant **Shown as** customization.
-- Panel-confirmed temporary bypass with clear failure when an acknowledged
-  operation is not applied.
-- Panel faults with pagination, heartbeat reconciliation and the
-  `pima.refresh_faults` action.
-- Internal/external sirens and controlled outputs.
-- Persistent last-alarm and arm/disarm audit diagnostics.
-- Config flow, YAML import, reconfiguration, device registry, redacted
-  diagnostics, English/Hebrew translations and Home Assistant-native naming.
+- `last_seen` and `last_heartbeat` are no longer copied onto the alarm control
+  panel entity. Their existing dedicated diagnostic sensors remain unchanged.
+- A PIMA keepalive no longer republishes an unchanged alarm state. Zone changes
+  still update their zone entities immediately, while arm/disarm,
+  trigger/restore, partition and connection transitions continue to update the
+  alarm entity normally.
+- An authoritative partition refresh no longer republishes an alarm state when
+  it exactly matches the event already received from the panel.
+- A new watchdog closes the active panel connection and reports it unavailable
+  after 12 minutes with no received JSON traffic. Any valid panel traffic resets
+  the watchdog, giving the normal four-minute heartbeat three expected periods
+  before a stale connection is declared.
+- Existing entity IDs, timestamp restore behavior, configuration and dashboards
+  are preserved.
 
-## Safety and upgrade notes
+## Validation
 
-- Sirens and per-zone bypass switches are disabled by default. Enable only the
-  entities you intentionally plan to operate.
-- Existing YAML configuration is imported into a config entry. Verify the new
-  entry, then remove the legacy `pima:` block and restart Home Assistant.
-- The panel initiates the TCP connection, so availability after restart depends
-  on the panel's reconnect interval.
-- Permanent technician cancellation is not exposed by JSON Interface 2.3.
-
-## Validation boundary
-
-Physically validated with Force JSON Interface 2.3, Home Assistant Core
-2026.8.3, one partition and 24 zones. Multiple partitions and controlled-output
-behavior are covered by automated protocol tests but have not been physically
-validated on suitable hardware.
-
-## Credits
-
-The release retains joint credit for aarbelle's original integration,
-amithalp's direction, development and physical validation, and OpenAI Codex's
-development assistance. See `AUTHORS.md` for details.
+Automated coverage verifies that alarm entities no longer subscribe to
+timestamp-only updates, that ordinary panel traffic postpones the watchdog,
+and that a stale session emits exactly one disconnect transition. Physical
+validation should confirm quiet zone activation/deactivation traffic and normal
+reconnect behavior before moving dependent automations to a production system.

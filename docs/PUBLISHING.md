@@ -10,8 +10,7 @@ history and the attribution in `AUTHORS.md`.
 2. Create the GitHub repository with Issues enabled and a useful description.
 3. Push the full repository and confirm all jobs in `validate.yaml` pass.
 4. Add the repository to HACS as a custom integration and test a clean install.
-5. Tag the same version declared in `custom_components/pima/manifest.json`:
-   `v1.20.0`.
+5. Tag the same version declared in `custom_components/pima/manifest.json`.
 6. Create a full GitHub release from that tag using `RELEASE_NOTES.md`.
 
 Do not publish a release asset containing development ZIP archives, panel

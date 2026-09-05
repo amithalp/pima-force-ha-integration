@@ -3,14 +3,14 @@
 ## Required before publishing
 
 - [x] Add the MIT License authorized for the community release as `LICENSE`.
-- [ ] Create or confirm the public repository at
+- [x] Create or confirm the public repository at
   `amithalp/pima-force-ha-integration` with Issues enabled.
-- [ ] Confirm the repository description and topics include Home Assistant,
+- [x] Confirm the repository description and topics include Home Assistant,
   PIMA, alarm and HACS.
 - [ ] Push the complete Git history and release candidate.
 - [ ] Require the unit-test, HACS and hassfest validation jobs to pass.
-- [ ] Perform a clean installation through HACS as a custom repository.
-- [ ] Create a full GitHub release for `v1.20.0`, not only a tag, using
+- [ ] Perform an upgrade through HACS from 1.20.0.
+- [ ] Create a full GitHub release for `v1.21.0`, not only a tag, using
   `RELEASE_NOTES.md`.
 
 ## Completed release preparation
@@ -39,6 +39,12 @@
 - [x] Rejection when temporary bypass is not applied to a permanently disabled
   zone.
 - [x] Live connection/trouble state and active-fault recovery after reload.
+- [x] Confirm zone open/close and the four-minute heartbeat no longer republish
+  an unchanged alarm entity on the physical panel.
+- [x] Confirm the alarm entity still updates for arm/disarm and genuine
+  connection transitions.
+- [ ] Confirm the 12-minute watchdog disconnects and later reconnects on a
+  physical panel; automated coverage is complete.
 - [ ] Multiple physical partitions — automated only; no suitable panel tested.
 - [ ] Controlled outputs — protocol automated tests only; no configured output
   available for physical verification.
