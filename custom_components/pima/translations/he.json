@@ -1,0 +1,59 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "חיבור למערכת PIMA Force",
+        "description": "הגדרת מאזין TCP עבור חיבור JSON של המוקד בלוח.",
+        "data": {
+          "account": "מספר חשבון בלוח",
+          "password": "קוד משתמש בלוח",
+          "port": "פורט האזנה"
+        },
+        "data_description": {
+          "account": "מספר החשבון שהוגדר במוקד של הלוח.",
+          "password": "קוד משתמש בעל ההרשאות הנדרשות לפעולות המבוקשות.",
+          "port": "פורט ה-TCP שהוגדר במוקד של הלוח."
+        }
+      },
+      "reconfigure": {
+        "title": "הגדרה מחדש של PIMA Force",
+        "data": {
+          "account": "מספר חשבון בלוח",
+          "password": "קוד משתמש בלוח",
+          "port": "פורט האזנה"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "לוח PIMA זה כבר מוגדר.",
+      "unique_id_mismatch": "מספר החשבון חייב להתאים ללוח שכבר הוגדר."
+    }
+  },
+  "entity": {
+    "button": {
+      "arm_home_1": { "name": "דריכת בית 1" },
+      "arm_home_2": { "name": "דריכת בית 2" },
+      "arm_home_3": { "name": "דריכת בית 3" },
+      "arm_home_4": { "name": "דריכת בית 4" },
+      "arm_shabbat": { "name": "דריכת שבת" }
+    },
+    "binary_sensor": {
+      "panel_connection": { "name": "חיבור" },
+      "panel_trouble": { "name": "תקלה" }
+    },
+    "sensor": {
+      "fault_count": { "name": "מספר תקלות פעילות" },
+      "last_seen": { "name": "נראה לאחרונה" },
+      "last_heartbeat": { "name": "פעימת מערכת אחרונה" },
+      "last_triggered_zone": { "name": "אזור שהפעיל לאחרונה" },
+      "last_triggered_partition": { "name": "מחיצה שהופעלה לאחרונה" },
+      "last_triggered_user": { "name": "נדרך על ידי לפני האזעקה האחרונה" },
+      "last_triggered_at": { "name": "מועד האזעקה האחרונה" },
+      "last_armed_by": { "name": "נדרך לאחרונה על ידי" },
+      "last_armed_at": { "name": "מועד דריכה אחרון" },
+      "last_disarmed_by": { "name": "נוטרל לאחרונה על ידי" },
+      "last_disarmed_at": { "name": "מועד נטרול אחרון" },
+      "last_system_action": { "name": "פעולת מערכת אחרונה" }
+    }
+  }
+}

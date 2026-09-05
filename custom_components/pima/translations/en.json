@@ -1,0 +1,59 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to PIMA Force",
+        "description": "Configure the TCP listener used by the panel's JSON MOKED connection.",
+        "data": {
+          "account": "Panel account number",
+          "password": "Panel user code",
+          "port": "Listener port"
+        },
+        "data_description": {
+          "account": "The account number configured in the panel's MOKED.",
+          "password": "A panel user code with the privileges required for the requested operations.",
+          "port": "The TCP port configured in the panel's MOKED."
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure PIMA Force",
+        "data": {
+          "account": "Panel account number",
+          "password": "Panel user code",
+          "port": "Listener port"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This PIMA panel is already configured.",
+      "unique_id_mismatch": "The account number must match the configured panel."
+    }
+  },
+  "entity": {
+    "button": {
+      "arm_home_1": { "name": "Arm Home 1" },
+      "arm_home_2": { "name": "Arm Home 2" },
+      "arm_home_3": { "name": "Arm Home 3" },
+      "arm_home_4": { "name": "Arm Home 4" },
+      "arm_shabbat": { "name": "Arm Shabbat" }
+    },
+    "binary_sensor": {
+      "panel_connection": { "name": "Connection" },
+      "panel_trouble": { "name": "Trouble" }
+    },
+    "sensor": {
+      "fault_count": { "name": "Active fault count" },
+      "last_seen": { "name": "Last seen" },
+      "last_heartbeat": { "name": "Last heartbeat" },
+      "last_triggered_zone": { "name": "Last triggered zone" },
+      "last_triggered_partition": { "name": "Last triggered partition" },
+      "last_triggered_user": { "name": "Armed by before last trigger" },
+      "last_triggered_at": { "name": "Last triggered time" },
+      "last_armed_by": { "name": "Last armed by" },
+      "last_armed_at": { "name": "Last armed time" },
+      "last_disarmed_by": { "name": "Last disarmed by" },
+      "last_disarmed_at": { "name": "Last disarmed time" },
+      "last_system_action": { "name": "Last system action" }
+    }
+  }
+}

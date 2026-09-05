@@ -1,0 +1,6 @@
+{"frame_type":"null","counter":42,"account":999001}
+{"frame_type":"EVENT","counter":158,"account":999001,"type":130,"qualifier":1,"zone":5,"partition":3}
+{"frame_type":"EVENT","counter":159,"account":999001,"type":130,"qualifier":3,"zone":5,"partition":3}
+{"frame_type":"ACK","counter":129,"account":999001}
+{"frame_type":"NAK","counter":130,"account":999001,"DATA":"Wrong User Code"}
+{"frame_type":"DATA","counter":201,"account":999001,"id":2310,"start_order":1,"parameters":["3","2","1"],"more":"no"}

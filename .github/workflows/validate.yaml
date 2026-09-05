@@ -1,5 +1,8 @@
 name: Validate
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -8,6 +11,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  tests:
+    name: Unit tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile integration
+        run: python -m compileall -q custom_components/pima tests
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
   hacs:
     name: HACS Validation
     runs-on: ubuntu-latest

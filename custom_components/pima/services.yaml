@@ -1,0 +1,57 @@
+arm_home_1:
+  name: Arm Home 1
+  description: Arm a PIMA partition in Home 1 mode.
+  fields: &partition_field
+    partition:
+      name: Partition
+      description: PIMA partition number.
+      required: false
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 16
+          mode: box
+
+arm_home_2:
+  name: Arm Home 2
+  description: Arm a PIMA partition in Home 2 mode.
+  fields: *partition_field
+
+arm_home_3:
+  name: Arm Home 3
+  description: Arm a PIMA partition in Home 3 mode.
+  fields: *partition_field
+
+arm_home_4:
+  name: Arm Home 4
+  description: Arm a PIMA partition in Home 4 mode.
+  fields: *partition_field
+
+arm_shabbat:
+  name: Arm Shabbat
+  description: Arm a PIMA partition in Shabbat mode.
+  fields: *partition_field
+
+bypass_zone:
+  name: Bypass zone
+  description: Bypass one installed PIMA zone and confirm the result from the panel.
+  fields: &zone_field
+    zone:
+      name: Zone
+      description: Installed PIMA zone number.
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 144
+          mode: box
+
+unbypass_zone:
+  name: Un-bypass zone
+  description: Remove the bypass from one installed PIMA zone and confirm the result from the panel.
+  fields: *zone_field
+
+refresh_faults:
+  name: Refresh faults
+  description: Request the current authoritative active-fault list from the PIMA panel.

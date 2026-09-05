@@ -1,0 +1,8 @@
+{"frame_type":"NULL","counter":9999,"account":999001}
+{"frame_type":"DATA","counter":1,"account":999001,"id":2148,"start_order":1,"parameters":["4"],"more":"no"}
+{"frame_type":"DATA","counter":2,"account":999001,"id":260,"start_order":1,"parameters":["Front Door","Living Room","Bedroom","Utility"],"more":"no"}
+{"frame_type":"DATA","counter":3,"account":999001,"id":2149,"start_order":1,"parameters":["80001","A0002","8003"],"more":"no"}
+{"frame_type":"DATA","counter":4,"account":999001,"id":2310,"start_order":1,"parameters":["3","1","1","1"],"more":"no"}
+{"frame_type":"EVENT","counter":5,"account":999001,"type":130,"qualifier":1,"zone":2,"partition":1}
+{"frame_type":"EVENT","counter":5,"account":999001,"type":130,"qualifier":1,"zone":2,"partition":1}
+{"frame_type":"EVENT","counter":6,"account":999001,"type":130,"qualifier":3,"zone":2,"partition":1}

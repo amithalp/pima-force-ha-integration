@@ -1,0 +1,12 @@
+{"frame_type":"DATA","counter":10,"account":"654321","id":2150,"start_order":8,"parameters":["1"]}
+{"frame_type":"ACK","counter":10,"account":"654321"}
+{"frame_type":"DATA","counter":11,"account":"654321","id":2150,"start_order":8,"parameters":["0"],"more":"no"}
+{"frame_type":"event","counter":20,"account":"654321","type":306,"qualifier":1,"zone":0,"partition":1}
+{"frame_type":"DATA","counter":12,"account":"654321","id":2150,"start_order":8,"parameters":["1"]}
+{"frame_type":"ACK","counter":12,"account":"654321"}
+{"frame_type":"DATA","counter":13,"account":"654321","id":2150,"start_order":8,"parameters":["1"],"more":"no"}
+{"frame_type":"event","counter":1,"account":"654321","type":570,"qualifier":1,"zone":8,"partition":1}
+{"frame_type":"DATA","counter":14,"account":"654321","id":2150,"start_order":8,"parameters":["0"]}
+{"frame_type":"ACK","counter":14,"account":"654321"}
+{"frame_type":"DATA","counter":15,"account":"654321","id":2150,"start_order":8,"parameters":["0"],"more":"no"}
+{"frame_type":"event","counter":2,"account":"654321","type":570,"qualifier":3,"zone":8,"partition":1}

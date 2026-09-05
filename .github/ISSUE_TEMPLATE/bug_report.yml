@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a reproducible PIMA Force integration problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove account numbers, user codes, IP addresses, personal names and other private alarm data before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: Integration version
+      placeholder: 1.20.0
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      placeholder: 2026.8.3
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Panel and JSON interface
+      description: Panel model, firmware if known, JSON version, zone count and partition count.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include what you expected and the exact steps that reproduce the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized debug logs or diagnostics
+      render: text
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: I removed credentials, accounts, private addresses, zone/user names and other personal data.
+          required: true

@@ -1,11 +1,14 @@
 {
   "domain": "pima",
   "name": "PIMA Force",
-  "codeowners": ["@aarbelle"],
+  "codeowners": ["@amithalp"],
+  "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/aarbelle/pima-force-ha-integration",
+  "documentation": "https://github.com/amithalp/pima-force-ha-integration",
+  "integration_type": "hub",
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/aarbelle/pima-force-ha-integration/issues",
+  "issue_tracker": "https://github.com/amithalp/pima-force-ha-integration/issues",
   "requirements": [],
-  "version": "1.0.0"
+  "single_config_entry": true,
+  "version": "1.20.0"
 }
