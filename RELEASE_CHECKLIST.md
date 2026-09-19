@@ -9,8 +9,8 @@
   PIMA, alarm and HACS.
 - [ ] Push the complete Git history and release candidate.
 - [ ] Require the unit-test, HACS and hassfest validation jobs to pass.
-- [ ] Perform an upgrade through HACS from 1.20.0.
-- [ ] Create a full GitHub release for `v1.21.0`, not only a tag, using
+- [ ] Perform an upgrade through HACS from 1.21.0.
+- [ ] Create a full GitHub release for `v1.21.1`, not only a tag, using
   `RELEASE_NOTES.md`.
 
 ## Completed release preparation

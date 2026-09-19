@@ -3,6 +3,12 @@
 All notable changes to the PIMA Force Home Assistant integration will be
 documented in this file. Versions follow semantic versioning.
 
+## 1.21.1 - Last triggered zone name refresh
+
+- Refresh the last triggered zone sensor when panel zone names finish loading,
+  replacing a temporary number such as `Zone 6` with its configured name.
+- Keep the numeric zone ID in the sensor's `zone` attribute.
+
 ## 1.21.0 - Quiet alarm state and stale-connection detection
 
 - Stop copying `last_seen` and `last_heartbeat` onto alarm-control-panel
