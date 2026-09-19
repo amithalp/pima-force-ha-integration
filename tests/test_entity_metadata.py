@@ -428,6 +428,41 @@ class EntityMetadataTests(unittest.TestCase):
         )
         self.assertEqual(sensor_module._system_action_label("disarmed"), "Disarmed")
 
+    def test_last_triggered_zone_updates_when_names_arrive(self):
+        class Bus:
+            def __init__(self):
+                self.listeners = {}
+
+            def async_listen(self, event_type, handler):
+                self.listeners[event_type] = handler
+                return lambda: None
+
+        async def exercise():
+            self.server.last_triggered = {1: {"last_triggered_zone": 6}}
+            hass = SimpleNamespace(bus=Bus())
+            entities = []
+
+            def add_entities(new_entities):
+                for entity in new_entities:
+                    entity.hass = hass
+                    entities.append(entity)
+
+            await sensor_module._async_setup(hass, add_entities, self.server, None)
+            zone_sensor = next(
+                entity for entity in entities
+                if entity._attr_translation_key == "last_triggered_zone"
+            )
+            self.assertEqual(zone_sensor._attr_native_value, "Zone 6")
+            self.server.zones[6] = {"name": "Kitchen"}
+            await hass.bus.listeners["pima_zone_names_updated"](
+                SimpleNamespace(data={})
+            )
+            self.assertEqual(zone_sensor._attr_native_value, "Kitchen")
+            self.assertEqual(zone_sensor._attr_extra_state_attributes, {"zone": 6})
+            self.assertEqual(zone_sensor.state_write_count, 1)
+
+        asyncio.run(exercise())
+
     def test_last_trigger_sensor_restores_native_value_and_number(self):
         async def exercise():
             entity = sensor_module.PimaDiagnosticSensor(

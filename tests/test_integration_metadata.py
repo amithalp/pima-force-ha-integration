@@ -14,7 +14,7 @@ class IntegrationMetadataTests(unittest.TestCase):
         self.assertTrue(manifest["single_config_entry"])
         self.assertEqual(manifest["integration_type"], "hub")
         self.assertIn("@amithalp", manifest["codeowners"])
-        self.assertEqual(manifest["version"], "1.21.0")
+        self.assertEqual(manifest["version"], "1.21.1")
         self.assertEqual(manifest["codeowners"], ["@amithalp"])
         self.assertEqual(
             manifest["documentation"],

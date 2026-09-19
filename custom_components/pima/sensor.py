@@ -125,6 +125,20 @@ async def _async_setup(hass, async_add_entities, server, entry):
         sensor._attr_available = True
         write(sensor)
 
+    async def handle_zone_names_updated(event):
+        sensor = sensors["last_triggered_zone"]
+        zone = sensor._attr_extra_state_attributes.get("zone")
+        if zone is None:
+            zone = _latest_trigger(server.last_triggered).get("last_triggered_zone")
+        if zone is None:
+            return
+        label = _zone_label(server, zone)
+        if sensor._attr_native_value != label:
+            sensor._attr_native_value = label
+            sensor._attr_extra_state_attributes = {"zone": zone}
+            sensor._attr_available = True
+            write(sensor)
+
     async def handle_state(event):
         if "last_triggered_zone" in event.data:
             values = {
@@ -195,6 +209,7 @@ async def _async_setup(hass, async_add_entities, server, entry):
 
     listen("pima_last_seen", handle_last_seen)
     listen("pima_faults_updated", handle_faults)
+    listen("pima_zone_names_updated", handle_zone_names_updated)
     listen("pima_state", handle_state)
     listen("pima_disconnected", handle_disconnected)
     listen("pima_connected", handle_connected)
