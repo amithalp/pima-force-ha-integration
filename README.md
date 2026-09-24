@@ -77,6 +77,10 @@ panel initiates the connection; Home Assistant does not connect outward to the
 panel. A delay before the first connection can therefore be caused by the
 panel's own reconnect interval.
 
+The PIMA panel must also be configured with a MOKED connection using JSON over
+TCP. Follow the illustrated Hebrew guide:
+**[PIMA Force panel setup](docs/PANEL_SETUP_HE.md)**.
+
 The panel normally sends traffic at least once every four minutes. If an active
 TCP session receives no JSON frame for 12 minutes, the integration marks it
 disconnected and closes the stale session so the panel can reconnect. Last Seen
