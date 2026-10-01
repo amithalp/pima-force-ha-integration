@@ -732,6 +732,21 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(siren_updates), 2)
         self.assertEqual(len(output_updates), 8)
 
+    async def test_empty_status_preserves_confirmed_siren_events(self):
+        frame = {"frame_type": "DATA", "id": 2301, "start_order": 1,
+                 "parameters": [], "more": "no"}
+        self.server.process_data(frame)
+        self.assertEqual(self.server.sirens, {1: None, 2: None})
+        for qualifier, expected in ((1, True), (3, False)):
+            for number in (1, 2):
+                await self.server.handle_message({
+                    "frame_type": "EVENT", "counter": qualifier * 10 + number,
+                    "type": 770, "qualifier": qualifier,
+                    "zone": number, "partition": 0,
+                })
+            self.server.process_data(frame)
+            self.assertEqual(self.server.sirens, {1: expected, 2: expected})
+
     async def test_output_operation_uses_order_and_refreshes_2301(self):
         task = asyncio.create_task(self.server.send_operation(35, partition=0, order=34))
         await asyncio.sleep(0)

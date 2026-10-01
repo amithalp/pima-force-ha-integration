@@ -3,6 +3,15 @@
 All notable changes to the PIMA Force Home Assistant integration will be
 documented in this file. Versions follow semantic versioning.
 
+## 1.21.2 - Siren state confirmation
+
+- Show sirens as unknown until a status value or physical output event confirms
+  their state after startup or reconnect.
+- Preserve confirmed siren state when the panel returns an empty status reply,
+  including an Off event received before the command's status refresh.
+- Preserve unknown states in Home Assistant instead of converting them to Off.
+- Add regression coverage for empty replies and physical siren transitions.
+
 ## 1.21.1 - Last triggered zone name refresh
 
 - Refresh the last triggered zone sensor when panel zone names finish loading,

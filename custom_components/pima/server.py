@@ -113,7 +113,7 @@ class PimaServer:
         self.last_seen = None
         self.last_heartbeat = None
         self.zones = {}          # zone_num -> dict with "open", "name", etc.
-        self.sirens = {number: False for number in range(1, 3)}
+        self.sirens = {number: None for number in range(1, 3)}
         self.outputs = {number: False for number in range(1, 9)}
         self.physical_outputs = {}
         self.faults = []
@@ -179,6 +179,7 @@ class PimaServer:
         if previous_watchdog and not previous_watchdog.done():
             previous_watchdog.cancel()
         self.connected = True
+        self.sirens = {number: None for number in self.sirens}
         self.last_seen = datetime.now(UTC)
         self._last_traffic_received = asyncio.get_running_loop().time()
         connection_watchdog = asyncio.create_task(
@@ -647,6 +648,8 @@ class PimaServer:
 
         # 2301 orders 1..2 are sirens; 34..41 are controlled outputs 1..8.
         if data_id == 2301:
+            # Empty replies carry no state: retain any status confirmed in
+            # this connection, including a 770 event preceding this reply.
             for i, raw in enumerate(params):
                 order = start_order + i
                 try:

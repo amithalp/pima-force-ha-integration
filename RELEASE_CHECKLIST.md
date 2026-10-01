@@ -9,8 +9,8 @@
   PIMA, alarm and HACS.
 - [ ] Push the complete Git history and release candidate.
 - [ ] Require the unit-test, HACS and hassfest validation jobs to pass.
-- [ ] Perform an upgrade through HACS from 1.21.0.
-- [ ] Create a full GitHub release for `v1.21.1`, not only a tag, using
+- [ ] Perform an upgrade through HACS from 1.21.1.
+- [ ] Create a full GitHub release for `v1.21.2`, not only a tag, using
   `RELEASE_NOTES.md`.
 
 ## Completed release preparation
@@ -56,3 +56,10 @@
 - [ ] After Brands approval and community use, consider requesting inclusion in
   the HACS default repository list. A custom-repository HACS release does not
   require waiting for that review.
+
+## 1.21.2 siren regression checks
+
+- [ ] Verify unknown state after reconnect when status replies are empty.
+- [x] Maintainer confirmed both sirens initially show Unknown after installation
+  and then follow physical On/Off changes (2026-10-01).
+- [ ] Verify empty refresh replies preserve confirmed Off events.
