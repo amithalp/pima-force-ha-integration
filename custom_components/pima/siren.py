@@ -28,7 +28,7 @@ async def _async_setup(hass, async_add_entities, server, entry):
         number = int(event.data["siren"])
         if 1 <= number <= len(entities):
             entity = entities[number - 1]
-            entity._attr_is_on = bool(event.data["is_on"])
+            entity._attr_is_on = event.data["is_on"]
             entity._attr_available = True
             if entity.hass is not None:
                 entity.async_write_ha_state()
@@ -42,6 +42,8 @@ async def _async_setup(hass, async_add_entities, server, entry):
                 entity.async_write_ha_state()
 
     async def handle_connected(event):
+        for entity in entities:
+            entity._attr_is_on = server.sirens[entity.number]
         set_available(True)
 
     async def handle_disconnected(event):
