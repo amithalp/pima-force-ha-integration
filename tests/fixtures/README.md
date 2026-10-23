@@ -15,3 +15,7 @@
 
 When adding captures, keep counters and message ordering intact; replace account,
 password, user names, zone names, network addresses, and other identifying data.
+
+- `output_status_2201.jsonl` normalizes the all-off example from PIMA support's
+  "JSON outputs report and status" document (reviewed 2026-10-23). It is a
+  documentation example with a synthetic account, not a live panel capture.
