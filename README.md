@@ -143,6 +143,15 @@ Permanent technician cancellation is not exposed by JSON Interface 2.3.
 
 ### Sirens and outputs
 
+Version 1.21.3 requests current physical siren state using PIMA DATA-REQ 2201
+at startup/reconnect and after siren commands. Event 770 supplies live changes.
+Until a valid response or event arrives, the siren state is Unknown; empty
+responses do not imply Off. Enable **Zone/output status reporting** on the
+fourth **Event Reporting** screen of the monitoring station configured for HA.
+The maintainer verified manual control of both sirens and automatic Off state
+recovery after two HA restarts on 2026-10-23.
+
+
 Siren entities are disabled by default to prevent accidental activation. Enable
 them intentionally from the entity registry and test them only when it is safe.
 

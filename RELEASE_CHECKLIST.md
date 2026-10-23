@@ -9,8 +9,8 @@
   PIMA, alarm and HACS.
 - [ ] Push the complete Git history and release candidate.
 - [ ] Require the unit-test, HACS and hassfest validation jobs to pass.
-- [ ] Perform an upgrade through HACS from 1.21.1.
-- [ ] Create a full GitHub release for `v1.21.2`, not only a tag, using
+- [ ] Perform an upgrade through HACS from 1.21.2.
+- [ ] Create a full GitHub release for `v1.21.3`, not only a tag, using
   `RELEASE_NOTES.md`.
 
 ## Completed release preparation
@@ -59,7 +59,20 @@
 
 ## 1.21.2 siren regression checks
 
+Open follow-up: [siren state recovery after restart](docs/OPEN_ISSUES.md).
+
 - [ ] Verify unknown state after reconnect when status replies are empty.
 - [x] Maintainer confirmed both sirens initially show Unknown after installation
   and then follow physical On/Off changes (2026-10-01).
 - [ ] Verify empty refresh replies preserve confirmed Off events.
+
+## 1.21.3 publication gate
+
+- [x] Both sirens became Off after HA restart without activation; maintainer
+  confirmed on the physical panel (2026-10-23).
+- [x] Maintainer verified manual On/Off control of both sirens (2026-10-23).
+  Post-command 2201 request coverage is automated; no new wire capture reviewed.
+- [x] Maintainer verified both sirens report Off after a second HA restart
+  (2026-10-23).
+- [ ] Confirm GitHub unit-test, HACS and hassfest checks before publication.
+- [x] Maintainer approved publishing v1.21.3 on 2026-10-23 after panel tests.

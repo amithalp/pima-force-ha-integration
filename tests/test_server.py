@@ -165,12 +165,12 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
         requests = [f for f in self.server.writer.frames if f["frame_type"] == "DATA-REQ"]
         self.assertEqual(len(ack_frames), 2)
         self.assertEqual(
-            [f["id"] for f in requests], [2310, 2148, 2301, 2301, 2250, 411]
+            [f["id"] for f in requests], [2310, 2148, 2201, 2301, 2250, 411]
         )
         output_requests = [f for f in requests if f["id"] == 2301]
         self.assertEqual(
             [(f["start_order"], f["stop_order"]) for f in output_requests],
-            [(1, 2), (34, 41)],
+            [(34, 41)],
         )
         heartbeat = [d for n, d in self.hass.bus.events if n == "pima_last_seen"]
         self.assertEqual(len(heartbeat), 2)
@@ -713,9 +713,9 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
             pima_server.FAULT_INIT_RETRY_DELAY = original_delay
         self.assertEqual(calls, [1] * pima_server.FAULT_INIT_RETRIES)
 
-    def test_2301_decodes_siren_and_controlled_output_status(self):
+    def test_siren_and_controlled_output_status_use_separate_ids(self):
         self.server.process_data({
-            "frame_type": "DATA", "id": 2301, "start_order": 1,
+            "frame_type": "DATA", "id": 2201, "start_order": 1,
             "parameters": ["1", "0"], "more": "no",
         })
         self.server.process_data({
@@ -733,7 +733,7 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(output_updates), 8)
 
     async def test_empty_status_preserves_confirmed_siren_events(self):
-        frame = {"frame_type": "DATA", "id": 2301, "start_order": 1,
+        frame = {"frame_type": "DATA", "id": 2201, "start_order": 1,
                  "parameters": [], "more": "no"}
         self.server.process_data(frame)
         self.assertEqual(self.server.sirens, {1: None, 2: None})
@@ -746,6 +746,48 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
                 })
             self.server.process_data(frame)
             self.assertEqual(self.server.sirens, {1: expected, 2: expected})
+
+    async def test_reconnect_requests_and_recovers_siren_state(self):
+        for _ in range(2):
+            self.server.sirens = {1: True, 2: True}
+            reader, writer = FakeReader(), FakeWriter()
+            task = asyncio.create_task(self.server.handle_client(reader, writer))
+            await asyncio.sleep(0)
+            try:
+                self.assertEqual(self.server.sirens, {1: None, 2: None})
+                await self.server.handle_message(load_fixture("specification.jsonl")[0])
+                requests = [f for f in writer.frames if f.get("id") == 2201]
+                self.assertEqual(len(requests), 1)
+                self.assertEqual((requests[0]["partition"], requests[0]["opclass"]), (0, 1))
+                self.assertNotIn("start_order", requests[0])
+                await self.server.handle_message(load_fixture("output_status_2201.jsonl")[0])
+                self.assertEqual(self.server.sirens, {1: False, 2: False})
+                self.assertFalse(any(f["frame_type"] == "OPERATION" for f in writer.frames))
+            finally:
+                reader.close()
+                await task
+
+    async def test_documented_2201_pages_confirm_off_without_operation(self):
+        await self.server.handle_message(load_fixture("output_status_2201.jsonl")[0])
+        self.assertEqual(self.server.sirens, {1: False, 2: False})
+        self.assertEqual(self.server.physical_outputs, {1: False, 2: False})
+        self.assertTrue(any(f["frame_type"] == "ACK" for f in self.server.writer.frames))
+        self.assertFalse(any(f["frame_type"] in ("OPERATION", "DATA-REQ")
+                             for f in self.server.writer.frames))
+        self.server.process_data({"id": 2201, "start_order": 17,
+                                  "parameters": ["1"] * 16, "more": "no"})
+        self.assertEqual(self.server.sirens, {1: False, 2: False})
+        self.assertTrue(all(not state for state in self.server.outputs.values()))
+
+    def test_2201_partial_and_invalid_values_preserve_confirmed_state(self):
+        self.server.process_data({"id": 2201, "parameters": ["1", "0"]})
+        for bad in ("2", "-1", "invalid", None, True):
+            self.server.process_data({"id": 2201, "parameters": [bad, bad]})
+            self.assertEqual(self.server.sirens, {1: True, 2: False})
+        self.server.process_data({"id": 2201, "start_order": 2, "parameters": ["1"]})
+        self.assertEqual(self.server.sirens, {1: True, 2: True})
+        self.server.process_data({"id": 2301, "start_order": 1, "parameters": ["0", "0"]})
+        self.assertEqual(self.server.sirens, {1: True, 2: True})
 
     async def test_output_operation_uses_order_and_refreshes_2301(self):
         task = asyncio.create_task(self.server.send_operation(35, partition=0, order=34))
@@ -762,7 +804,7 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(refresh["id"], 2301)
         self.assertEqual((refresh["start_order"], refresh["stop_order"]), (34, 41))
 
-    async def test_siren_operation_refreshes_only_siren_range(self):
+    async def test_siren_operation_refreshes_2201(self):
         task = asyncio.create_task(self.server.send_operation(36, partition=0, order=1))
         await asyncio.sleep(0)
         operation = self.server.writer.frames[0]
@@ -771,7 +813,11 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
         )
         await task
         refresh = self.server.writer.frames[-1]
-        self.assertEqual((refresh["id"], refresh["start_order"], refresh["stop_order"]), (2301, 1, 2))
+        self.assertEqual(refresh["id"], 2201)
+        self.assertEqual(refresh["partition"], 0)
+        self.assertEqual(refresh["opclass"], 1)
+        self.assertNotIn("start_order", refresh)
+        self.assertNotIn("stop_order", refresh)
 
     async def test_output_event_updates_physical_state_without_polling(self):
         await self.server.handle_message({

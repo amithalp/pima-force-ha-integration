@@ -3,6 +3,16 @@
 All notable changes to the PIMA Force Home Assistant integration will be
 documented in this file. Versions follow semantic versioning.
 
+## 1.21.3 - Current siren status recovery
+
+- Request physical siren status with ID 2201 on startup, reconnect, and after
+  siren commands, following PIMA's supplied output-status document.
+- Decode external/internal sirens from positions 1/2; accept only 0 and 1.
+- Preserve confirmed state on empty/invalid responses and ignore unrelated
+  output pages. Keep event 770 updates and controlled-output 2301 queries.
+- Maintainer verified manual control of both sirens and automatic Off state
+  recovery after two HA restarts on 2026-10-23.
+
 ## 1.21.2 - Siren state confirmation
 
 - Show sirens as unknown until a status value or physical output event confirms

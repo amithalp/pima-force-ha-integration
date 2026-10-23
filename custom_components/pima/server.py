@@ -646,7 +646,28 @@ class PimaServer:
             )
             return
 
-        # 2301 orders 1..2 are sirens; 34..41 are controlled outputs 1..8.
+        # PIMA's "JSON outputs report and status" defines physical sirens
+        # as orders 1 and 2 in 2201. Later pages are unrelated to sirens.
+        if data_id == 2201:
+            for i, raw in enumerate(params):
+                number = start_order + i
+                if number not in self.sirens:
+                    continue
+                value = str(raw).strip()
+                if value not in ("0", "1"):
+                    _LOGGER.warning("Invalid 2201 siren value for order %s", number)
+                    continue
+                is_on = value == "1"
+                self.sirens[number] = is_on
+                self.physical_outputs[number] = is_on
+                self.hass.bus.async_fire(
+                    "pima_siren_update", {"siren": number, "is_on": is_on}
+                )
+            # Both sirens are in the first page. Do not request unrelated
+            # output pages merely because the panel reports more=yes.
+            return
+
+        # 2301 is retained only for controlled outputs, orders 34..41.
         if data_id == 2301:
             # Empty replies carry no state: retain any status confirmed in
             # this connection, including a 770 event preceding this reply.
@@ -657,12 +678,7 @@ class PimaServer:
                 except (TypeError, ValueError):
                     _LOGGER.warning("Invalid 2301 value for order %s", order)
                     continue
-                if 1 <= order <= 2:
-                    self.sirens[order] = is_on
-                    self.hass.bus.async_fire(
-                        "pima_siren_update", {"siren": order, "is_on": is_on}
-                    )
-                elif 34 <= order <= 41:
+                if 34 <= order <= 41:
                     output = order - 33
                     self.outputs[output] = is_on
                     self.hass.bus.async_fire(
@@ -955,7 +971,7 @@ class PimaServer:
             })
             _LOGGER.debug("TX DATA-REQ 2148 (installed zones)")
 
-            await self._request_output_status(1, 2)
+            await self._request_siren_status()
             await self._request_output_status(34, 41)
             await self._request_faults(1)
             if self._fault_init_retry_task and not self._fault_init_retry_task.done():
@@ -1030,7 +1046,7 @@ class PimaServer:
             elif int(optype) in (35, 36):
                 requested_order = int(order or 0)
                 if 1 <= requested_order <= 2:
-                    await self._request_output_status(1, 2)
+                    await self._request_siren_status()
                 elif 34 <= requested_order <= 41:
                     await self._request_output_status(34, 41)
         except TimeoutError as err:
@@ -1108,8 +1124,20 @@ class PimaServer:
             "stop_order": 16,
         })
 
+    async def _request_siren_status(self):
+        """Read current physical siren state using PIMA's documented request."""
+        await self.send({
+            "frame_type": "DATA-REQ",
+            "counter": self._claim_counter(),
+            "account": self.account,
+            "password": self.password,
+            "partition": 0,
+            "opclass": 1,
+            "id": 2201,
+        })
+
     async def _request_output_status(self, start_order, stop_order):
-        """Refresh siren or controlled-output status."""
+        """Refresh controlled-output status."""
         await self.send({
             "frame_type": "DATA-REQ",
             "counter": self._claim_counter(),
