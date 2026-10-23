@@ -19,7 +19,9 @@ instructed by PIMA support.
 All 69 local tests passed; compilation and whitespace checks passed.
 Automated coverage includes startup requests, command refresh, documented
 16-output responses, page offsets, invalid/empty values, and live events.
-Physical-panel testing of 2201 and restart/reconnect recovery is pending.
+On 2026-10-23, the maintainer confirmed both sirens automatically showed Off
+after HA restarted and the panel connected, without siren activation.
+Live On/Off regression checks and a second restart remain pending.
 Do not publish until the maintainer confirms the test build on the panel.
 
 ## Manual test installation

@@ -2,7 +2,7 @@
 
 ## Siren state recovery after Home Assistant restart
 
-- Status: Fix prepared in 1.21.3 — awaiting physical-panel validation.
+- Status: Startup recovery verified in 1.21.3 — remaining release checks pending.
 - Recorded: 2026-10-22.
 - Affected integration version: 1.21.2.
 
@@ -26,8 +26,10 @@ leave the user without a known siren state, even when both sirens are off.
   external/internal sirens (0=Off, 1=On). Live updates use event 770.
 - PIMA requires Zone/output status reporting enabled on the fourth Event
   Reporting screen of the monitoring station configured for HA.
-- The 1.21.3 candidate implements this request. Firmware compatibility and
-  physical-panel startup/reconnect verification remain open.
+- On 2026-10-23, the maintainer confirmed that after HA restarted and the
+  panel connected, both sirens automatically showed Off as expected.
+- Additional restart and command regression checks remain pending. Broader
+  firmware compatibility has not been established.
 
 ### Follow-up
 

@@ -68,7 +68,8 @@ Open follow-up: [siren state recovery after restart](docs/OPEN_ISSUES.md).
 
 ## 1.21.3 publication gate
 
-- [ ] Verify both sirens become Off after HA restart without activation.
+- [x] Both sirens became Off after HA restart without activation; maintainer
+  confirmed on the physical panel (2026-10-23).
 - [ ] Verify live On/Off events and 2201 post-command refresh on the panel.
 - [ ] Verify a second restart/reconnect recovers the current state.
 - [ ] Confirm GitHub unit-test, HACS and hassfest checks before publication.
