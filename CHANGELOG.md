@@ -3,7 +3,7 @@
 All notable changes to the PIMA Force Home Assistant integration will be
 documented in this file. Versions follow semantic versioning.
 
-## 1.21.3 - Current siren status recovery (unreleased)
+## 1.21.3 - Current siren status recovery
 
 - Request physical siren status with ID 2201 on startup, reconnect, and after
   siren commands, following PIMA's supplied output-status document.

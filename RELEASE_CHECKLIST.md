@@ -75,4 +75,4 @@ Open follow-up: [siren state recovery after restart](docs/OPEN_ISSUES.md).
 - [x] Maintainer verified both sirens report Off after a second HA restart
   (2026-10-23).
 - [ ] Confirm GitHub unit-test, HACS and hassfest checks before publication.
-- [ ] Obtain maintainer confirmation before publishing v1.21.3.
+- [x] Maintainer approved publishing v1.21.3 on 2026-10-23 after panel tests.

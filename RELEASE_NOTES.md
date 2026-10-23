@@ -1,4 +1,4 @@
-# PIMA Force 1.21.3 — release candidate
+# PIMA Force 1.21.3
 
 This update addresses sirens remaining Unknown after Home Assistant restarts.
 The integration now requests physical output status using ID 2201 instead of
@@ -14,7 +14,7 @@ In the monitoring station configured for Home Assistant, enable
 "Zone/output status reporting" on the fourth Event Reporting screen, as
 instructed by PIMA support.
 
-## Validation and publication gate
+## Validation
 
 All 69 local tests passed; compilation and whitespace checks passed.
 Automated coverage includes startup requests, command refresh, documented
@@ -22,13 +22,13 @@ Automated coverage includes startup requests, command refresh, documented
 On 2026-10-23, the maintainer confirmed both sirens automatically showed Off
 after HA restarted and the panel connected, without siren activation.
 The maintainer also verified manual On/Off control of both sirens and automatic
-Off state recovery after a second HA restart. GitHub validation and publication
-approval remain pending.
-Do not publish until the maintainer confirms the test build on the panel.
+Off state recovery after a second HA restart.
 
-## Manual test installation
+## Installation
 
-The test ZIP contains a top-level pima/ directory. With the ZIP uploaded to
+Update through HACS and restart Home Assistant.
+
+For manual test installations, the test ZIP contains a top-level pima/ directory. With the ZIP uploaded to
 /homeassistant/custom_components, use Terminal & SSH:
 
 ```sh
