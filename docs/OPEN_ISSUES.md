@@ -2,7 +2,7 @@
 
 ## Siren state recovery after Home Assistant restart
 
-- Status: Startup recovery verified in 1.21.3 — remaining release checks pending.
+- Status: Resolved on the tested panel in 1.21.3 — publication pending.
 - Recorded: 2026-10-22.
 - Affected integration version: 1.21.2.
 
@@ -28,19 +28,21 @@ leave the user without a known siren state, even when both sirens are off.
   Reporting screen of the monitoring station configured for HA.
 - On 2026-10-23, the maintainer confirmed that after HA restarted and the
   panel connected, both sirens automatically showed Off as expected.
-- Additional restart and command regression checks remain pending. Broader
-  firmware compatibility has not been established.
+- The maintainer also verified manual control of both sirens and Off state
+  recovery after a second HA restart on 2026-10-23. Broader firmware
+  compatibility has not been established.
 
 ### Follow-up
 
-- [ ] Record PIMA's response and the installed panel firmware version.
-- [ ] Confirm which JSON-capable firmware supports current siren/output status
-  queries, and whether an alternative supported query exists.
-- [ ] Verify startup and reconnect state recovery on the physical panel using
-  the supported mechanism, if available.
-- [ ] If current-state queries remain unavailable, decide whether to restore
-  the last confirmed state with explicit restored/unconfirmed metadata. This
-  is a proposed fallback, not an implemented or approved behavior change.
+- [x] Record PIMA's response and implement its documented 2201 query.
+- [x] Verify automatic Off state recovery after two HA restarts and manual
+  On/Off control of both sirens on the physical panel.
+- [ ] Complete GitHub validation and obtain approval to publish 1.21.3.
+- [ ] Record installed firmware version for the compatibility record.
+
+Restoring remembered siren state is not needed for the tested panel because
+current-state querying works. Controlled-output firmware support is not
+established by these siren tests.
 
 Do not interpret an empty response or a command acknowledgement as proof of
 the physical state. No automatic siren activation should be used to recover

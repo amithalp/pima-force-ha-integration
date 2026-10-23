@@ -148,8 +148,8 @@ at startup/reconnect and after siren commands. Event 770 supplies live changes.
 Until a valid response or event arrives, the siren state is Unknown; empty
 responses do not imply Off. Enable **Zone/output status reporting** on the
 fourth **Event Reporting** screen of the monitoring station configured for HA.
-Startup recovery to Off was verified on the maintainer's panel on 2026-10-23;
-additional release-candidate regression checks remain pending.
+The maintainer verified manual control of both sirens and automatic Off state
+recovery after two HA restarts on 2026-10-23.
 
 
 Siren entities are disabled by default to prevent accidental activation. Enable

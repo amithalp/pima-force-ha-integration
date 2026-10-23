@@ -10,8 +10,8 @@ documented in this file. Versions follow semantic versioning.
 - Decode external/internal sirens from positions 1/2; accept only 0 and 1.
 - Preserve confirmed state on empty/invalid responses and ignore unrelated
   output pages. Keep event 770 updates and controlled-output 2301 queries.
-- Maintainer verified automatic Off state recovery after HA restart on
-  2026-10-23; remaining release checks are pending.
+- Maintainer verified manual control of both sirens and automatic Off state
+  recovery after two HA restarts on 2026-10-23.
 
 ## 1.21.2 - Siren state confirmation
 

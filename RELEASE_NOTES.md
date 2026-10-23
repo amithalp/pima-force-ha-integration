@@ -21,7 +21,9 @@ Automated coverage includes startup requests, command refresh, documented
 16-output responses, page offsets, invalid/empty values, and live events.
 On 2026-10-23, the maintainer confirmed both sirens automatically showed Off
 after HA restarted and the panel connected, without siren activation.
-Live On/Off regression checks and a second restart remain pending.
+The maintainer also verified manual On/Off control of both sirens and automatic
+Off state recovery after a second HA restart. GitHub validation and publication
+approval remain pending.
 Do not publish until the maintainer confirms the test build on the panel.
 
 ## Manual test installation

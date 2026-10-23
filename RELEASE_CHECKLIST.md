@@ -70,7 +70,9 @@ Open follow-up: [siren state recovery after restart](docs/OPEN_ISSUES.md).
 
 - [x] Both sirens became Off after HA restart without activation; maintainer
   confirmed on the physical panel (2026-10-23).
-- [ ] Verify live On/Off events and 2201 post-command refresh on the panel.
-- [ ] Verify a second restart/reconnect recovers the current state.
+- [x] Maintainer verified manual On/Off control of both sirens (2026-10-23).
+  Post-command 2201 request coverage is automated; no new wire capture reviewed.
+- [x] Maintainer verified both sirens report Off after a second HA restart
+  (2026-10-23).
 - [ ] Confirm GitHub unit-test, HACS and hassfest checks before publication.
 - [ ] Obtain maintainer confirmation before publishing v1.21.3.
