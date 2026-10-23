@@ -7,10 +7,10 @@
   `amithalp/pima-force-ha-integration` with Issues enabled.
 - [x] Confirm the repository description and topics include Home Assistant,
   PIMA, alarm and HACS.
-- [ ] Push the complete Git history and release candidate.
-- [ ] Require the unit-test, HACS and hassfest validation jobs to pass.
+- [x] Push the complete Git history and release candidate.
+- [x] Unit tests (Python 3.13/3.14), HACS and hassfest passed on PR #4.
 - [ ] Perform an upgrade through HACS from 1.21.2.
-- [ ] Create a full GitHub release for `v1.21.3`, not only a tag, using
+- [x] Create a full GitHub release for `v1.21.3`, not only a tag, using
   `RELEASE_NOTES.md`.
 
 ## Completed release preparation
@@ -59,7 +59,7 @@
 
 ## 1.21.2 siren regression checks
 
-Open follow-up: [siren state recovery after restart](docs/OPEN_ISSUES.md).
+Resolved in 1.21.3: [siren state recovery after restart](docs/OPEN_ISSUES.md).
 
 - [ ] Verify unknown state after reconnect when status replies are empty.
 - [x] Maintainer confirmed both sirens initially show Unknown after installation
@@ -74,5 +74,7 @@ Open follow-up: [siren state recovery after restart](docs/OPEN_ISSUES.md).
   Post-command 2201 request coverage is automated; no new wire capture reviewed.
 - [x] Maintainer verified both sirens report Off after a second HA restart
   (2026-10-23).
-- [ ] Confirm GitHub unit-test, HACS and hassfest checks before publication.
+- [x] All four GitHub checks passed before PR #4 merged.
 - [x] Maintainer approved publishing v1.21.3 on 2026-10-23 after panel tests.
+
+Published on 2026-10-23: [v1.21.3](https://github.com/amithalp/pima-force-ha-integration/releases/tag/v1.21.3).

@@ -2,13 +2,13 @@
 
 ## Siren state recovery after Home Assistant restart
 
-- Status: Resolved on the tested panel in 1.21.3 — publication pending.
+- Status: Resolved on the tested panel in 1.21.3 — published 2026-10-23.
 - Recorded: 2026-10-22.
 - Affected integration version: 1.21.2.
 
-Both sirens start as Unknown after startup or reconnect until the panel supplies
+In 1.21.2, both sirens started as Unknown after startup or reconnect until the panel supplies
 a status value or a physical output-change event. Frequent HA restarts therefore
-leave the user without a known siren state, even when both sirens are off.
+left the user without a known siren state, even when both sirens are off.
 
 ### Confirmed evidence
 
@@ -37,7 +37,10 @@ leave the user without a known siren state, even when both sirens are off.
 - [x] Record PIMA's response and implement its documented 2201 query.
 - [x] Verify automatic Off state recovery after two HA restarts and manual
   On/Off control of both sirens on the physical panel.
-- [ ] Complete GitHub validation and obtain approval to publish 1.21.3.
+- [x] All four GitHub checks passed, maintainer approved publication, and
+  [PR #4](https://github.com/amithalp/pima-force-ha-integration/pull/4) merged.
+- [x] Published [v1.21.3](https://github.com/amithalp/pima-force-ha-integration/releases/tag/v1.21.3)
+  on 2026-10-23.
 - [ ] Record installed firmware version for the compatibility record.
 
 Restoring remembered siren state is not needed for the tested panel because
